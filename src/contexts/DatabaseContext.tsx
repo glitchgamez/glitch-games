@@ -10,12 +10,14 @@ export interface Game {
   category: string;
   file_size: string;
   created_at: string;
+  updated_at?: string;
 }
 
 interface DatabaseContextType {
   games: Game[];
   loading: boolean;
-  addGame: (game: Omit<Game, 'id' | 'created_at'>) => Promise<void>;
+  addGame: (game: Omit<Game, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
+  updateGame: (id: string, game: Omit<Game, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
   deleteGame: (id: string) => Promise<void>;
   refreshGames: () => Promise<void>;
 }
@@ -54,7 +56,7 @@ export const DatabaseProvider: React.FC<DatabaseProviderProps> = ({ children }) 
     }
   };
 
-  const addGame = async (game: Omit<Game, 'id' | 'created_at'>) => {
+  const addGame = async (game: Omit<Game, 'id' | 'created_at' | 'updated_at'>) => {
     try {
       const { error } = await supabase
         .from('games')
@@ -64,6 +66,21 @@ export const DatabaseProvider: React.FC<DatabaseProviderProps> = ({ children }) 
       await fetchGames();
     } catch (error) {
       console.error('Error adding game:', error);
+      throw error;
+    }
+  };
+
+  const updateGame = async (id: string, game: Omit<Game, 'id' | 'created_at' | 'updated_at'>) => {
+    try {
+      const { error } = await supabase
+        .from('games')
+        .update(game)
+        .eq('id', id);
+
+      if (error) throw error;
+      await fetchGames();
+    } catch (error) {
+      console.error('Error updating game:', error);
       throw error;
     }
   };
@@ -95,6 +112,7 @@ export const DatabaseProvider: React.FC<DatabaseProviderProps> = ({ children }) 
     games,
     loading,
     addGame,
+    updateGame,
     deleteGame,
     refreshGames,
   };

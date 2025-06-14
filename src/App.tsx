@@ -4,6 +4,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { DatabaseProvider } from './contexts/DatabaseContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
+import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -19,10 +20,7 @@ function App() {
                 path="/admin" 
                 element={
                   <ProtectedRoute adminOnly>
-                    <div className="container mx-auto px-4 py-8">
-                      <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
-                      <p>Admin functionality coming soon...</p>
-                    </div>
+                    <AdminDashboard />
                   </ProtectedRoute>
                 } 
               />
